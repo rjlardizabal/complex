@@ -1,21 +1,24 @@
 sudo: required
 language: generic
+
 services:
-	- docker
+  - docker
 
 before_install:
-	- docker build -t mynameisarjay/react-test -f ./client/Dockerfile.dev ./client
+  - docker build -t rommellardizabal/react-test -f ./client/Dockerfile.dev ./client
 
-script: 
-	- docker run -e CI=true mynameisarjay/react-test npm test
-	
+script:
+  - docker run -e CI=true rommellardizabal/react-test npm test
+
 after_success:
-	- docker build -t rommellardizabal/multi-client ./client
-	- docker build -t rommellardizabal/multi-nginx ./nginx
-	- docker build -t rommellardizabal/multi-worker ./worker
-	- docker build -t rommellardizabal/multi-server ./server
-	- echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --pasword-stdin
-	- docker push rommellardizabal/multi-client 
-	- docker push rommellardizabal/multi-nginx 
-	- docker push rommellardizabal/multi-worker 
-	- docker push rommellardizabal/multi-server 
+  - docker build -t rommellardizabal/multi-client ./client
+  - docker build -t rommellardizabal/multi-nginx ./nginx
+  - docker build -t rommellardizabal/multi-server ./server
+  - docker build -t rommellardizabal/multi-worker ./worker
+  # Log in to the docker CLI
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
+  # Take those images and push them to docker hub
+  - docker push rommellardizabal/multi-client
+  - docker push rommellardizabal/multi-nginx
+  - docker push rommellardizabal/multi-server
+  - docker push rommellardizabal/multi-worker
